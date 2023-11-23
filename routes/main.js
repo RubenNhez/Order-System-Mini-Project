@@ -211,24 +211,8 @@ const { check, validationResult } = require ('express-validator');
     })
 // DONT FORGET THE redirectLogin
     //List of Starters, Mains And Desserts
-    // app.get('/list', function(req, res) {
-        
-        
-    //     let alldesserts = "SELECT * FROM desserts"; //query database to get all the books
-    //     // execute sql query
-    //     db.query(alldesserts, (err, result) => {
-    //         if (err) {
-    //             return res.redirect('/');
-    //         }
 
-    //         let dessertfood = Object.assign({}, shopData, {availableDesserts: result});
-    //         console.log(dessertfood)
-    //         res.render("list.ejs", dessertfood)
-    //     });
-    // });
-
-
-    app.get('/listmain', function(req, res) {
+    app.get('/MenuList', function(req, res) {
 
         let sqlquery = "SELECT * FROM starters"; //query database to get all the books
         // execute sql query
@@ -245,24 +229,9 @@ const { check, validationResult } = require ('express-validator');
                 }
     
                 let food = Object.assign({}, shopData, {availableStarters: resultStarters, availableMains: resultMains});
-                res.render("listmain.ejs", food)
+                res.render("MenuList.ejs", food)
             });
         });
-    });
-
-    app.get('/listmain', function(req, res) {
-        let allmains = "SELECT * FROM mains"; //query database to get all the books
-        // execute sql query
-        db.query(allmains, (err, result) => {
-            if (err) {
-                return res.redirect('/');
-            }
-
-            let mainsfood = Object.assign({}, shopData, {availableStarters: result});
-            console.log(mainsfood)
-            res.render("listmain.ejs", mainsfood)
-        });
-
     });
 
 
