@@ -1,0 +1,32 @@
+
+    <!doctype html>
+    <html>
+      <head>
+        <h1><%=shopName%> shop</h1>
+        <link rel="stylesheet"  type="text/css" href="main.css" />
+      </head>
+      <body>
+        <p>Here are all the Starters that we sell:</p>
+        <ul>
+            <%for (var i=0; i<availableStarters.length; i++){%>
+            <li>
+                <%=availableStarters[i].starter_name + ", " + availableStarters[i].starter_price%>
+            
+            </li>
+            <%}%>
+        </ul>
+
+        <p>Here are all the Main that we sell:</p>
+        <ul>
+            <%for (var i=0; i<availableMains.length; i++){%>
+            <li>
+                <%=availableMains[i].main_name + ", " + availableMains[i].main_price%>
+        
+            </li>
+            <%}%>
+        </ul>
+    
+    
+      </body>
+      
+    </html>
