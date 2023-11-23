@@ -25,7 +25,15 @@
             </li>
             <%}%>
         </ul>
-    
+        <p>Here are all the Desserts that we sell:</p>
+        <ul>
+            <%for (var i=0; i<availableDesserts.length; i++){%>
+            <li>
+                <%=availableDesserts[i].dessert_name + ", " + availableDesserts[i].dessert_price%>
+        
+            </li>
+            <%}%>
+        </ul>
     
       </body>
       

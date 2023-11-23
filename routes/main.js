@@ -227,9 +227,15 @@ const { check, validationResult } = require ('express-validator');
                 if (err) {
                     return res.redirect('/');
                 }
-    
-                let food = Object.assign({}, shopData, {availableStarters: resultStarters, availableMains: resultMains});
+                let alldesserts = "SELECT * FROM desserts"; //query database to get all the books
+                // execute sql query
+                db.query(alldesserts, (err, resultDesserts) => {
+                    if (err) {
+                        return res.redirect('/');
+                    }
+                let food = Object.assign({}, shopData, {availableStarters: resultStarters, availableMains: resultMains, availableDesserts: resultDesserts});
                 res.render("MenuList.ejs", food)
+                });
             });
         });
     });
