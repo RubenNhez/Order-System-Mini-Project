@@ -70,7 +70,7 @@ const { check, validationResult } = require ('express-validator');
         } 
         
     });
-
+  
     //Login Page
     app.get('/login', function (req,res) {
         res.render('login.ejs', shopData);                                                                     
@@ -209,6 +209,47 @@ const { check, validationResult } = require ('express-validator');
             }
         });
     })
+
+        // Food API 
+        app.get('/Recepies', function(req,res) {
+            const http = require('https');
+            const options = {
+                method: 'GET',
+                hostname: 'edamam-recipe-search.p.rapidapi.com',
+                port: null,
+                path: '/api/recipes/v2?type=public&co2EmissionsClass=A%2B&field%5B0%5D=uri&beta=true&random=true&cuisineType%5B0%5D=American&imageSize%5B0%5D=LARGE&mealType%5B0%5D=Breakfast&health%5B0%5D=alcohol-cocktail&diet%5B0%5D=balanced&dishType%5B0%5D=Biscuits%20and%20cookies',
+                headers: {
+                    'Accept-Language': 'en',
+                    'X-RapidAPI-Key': '9486a8821emsh667b5b1a47716a6p1fd922jsn3342ab69a8ca',
+                    'X-RapidAPI-Host': 'edamam-recipe-search.p.rapidapi.com'
+                }
+            };
+            const apiRequest = http.request(options, function (apiResponse) {
+                const chunks = [];
+        
+                apiResponse.on('data', function (chunk) {
+                    chunks.push(chunk);
+                });
+        
+                apiResponse.on('end', function () {
+                    const body = Buffer.concat(chunks);
+                    console.log(body.toString());
+                    // Assuming you want to send the response to the client
+                    res.send(body.toString());
+                });
+            });
+        //Handle errors
+        apiRequest.on('error', function(error) {
+            console.error(error);
+            // Handle error
+            res.status(500).send('Internal Server Error');
+        });
+        apiRequest.end();
+        
+        });
+
+        
+
 // DONT FORGET THE redirectLogin
     //List of Starters, Mains And Desserts
 
@@ -240,6 +281,67 @@ const { check, validationResult } = require ('express-validator');
         });
     });
 
+
+    app.get('/Order', function(req, res) {
+
+        let sqlquery = "SELECT * FROM starters"; //query database to get all the books
+        // execute sql query
+        db.query(sqlquery, (err, resultStarters) => {
+            if (err) {
+                return res.redirect('/');
+            }
+
+            let allmains = "SELECT * FROM mains"; //query database to get all the books
+            // execute sql query
+            db.query(allmains, (err, resultMains) => {
+                if (err) {
+                    return res.redirect('/');
+                }
+                let alldesserts = "SELECT * FROM desserts"; //query database to get all the books
+                // execute sql query
+                db.query(alldesserts, (err, resultDesserts) => {
+                    if (err) {
+                        return res.redirect('/');
+                    }
+                let food = Object.assign({}, shopData, {availableStarters: resultStarters, availableMains: resultMains, availableDesserts: resultDesserts});
+                res.render("Order.ejs", food)
+                });
+            });
+        });
+    });
+
+    app.post('/getOrder', function (req,res) {
+        const numericArray = req.body.Order.map(Number);
+        const resultString = `(${numericArray.join(",")})`;
+        console.log(resultString)
+        
+        // res.send(resultString)
+        let sqlquerystarter = 'SELECT starter_name FROM starters WHERE starter_id IN ' + resultString ;
+        
+        db.query(sqlquerystarter, (err, result) => {
+            if (err) {
+                return console.error(err.message);
+            }
+            else{
+                var allresults = ""
+                for (i=0; i < result.length; i++) {
+                    allresults += result[i].starter_name;
+                }
+            res.send(" Here are your Starters: " + allresults)
+                
+            }
+        })
+        let sqlquery = "";
+        // execute sql query
+        let newrecord = [];
+        db.query(sqlquery, newrecord, (err, result) => {
+            if (err) {
+                return console.error(err.message);
+            }
+        })
+
+    })
+    /
 
     app.get('/addstarter', function (req,res) {
         //Adding starter

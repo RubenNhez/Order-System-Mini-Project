@@ -1,0 +1,44 @@
+<!doctype html>
+    <html>
+      <head>
+        <h1><%=shopName%> shop</h1>
+        <link rel="stylesheet"  type="text/css" href="main.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+      </head>
+      <body>
+        <form action="/getOrder" method="POST">
+            <div>
+                <h2> Order Food</h2>
+                <label for="Ordering">Starters:</label>
+                <select name="Order" id="Order" multiple>
+                <%for (var i=0; i<availableStarters.length; i++){%>
+                    <option value="<%= i+1 %>"><%=availableStarters[i].starter_name + ", £" + availableStarters[i].starter_price%></option>
+                <%}%>
+                </select>
+                <label for="Ordering">Mains:</label>
+                <select name="Order_two" id="Order_two" multiple>
+                <%for (var i=0; i<availableStarters.length; i++){%>
+                    <option value="<%= i+1 %>"><%=availableMains[i].main_name + ", £" + availableMains[i].main_price%></option>
+                <%}%>
+                </select>   
+                <label for="Ordering">Desserts:</label>
+                <select name="Order_three" id="Order_three" multiple>
+                <%for (var i=0; i<availableDesserts.length; i++){%>
+                    <option value="<%= i+1%>"><%=availableDesserts[i].dessert_name + ", £" + availableDesserts[i].dessert_price%></option>
+                <%}%>
+                </select>
+                <br><br>
+                <input type="submit" value="Order">      
+            </div>
+        </form>
+        <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+        <script>
+            new MultiSelectTag('Order')
+            new MultiSelectTag('Order_two')
+            new MultiSelectTag('Order_three')
+
+        </script>
+        
+      </body>
+      
+    </html>
