@@ -15,22 +15,6 @@ const { check, validationResult } = require ('express-validator');
     app.get('/about',function(req,res){
         res.render('about.ejs', shopData);
     });
-    app.get('/search',function(req,res){
-        res.render("search.ejs", shopData);
-    });
-    app.get('/search-result', function (req, res) {
-        //searching in the database
-        //res.send("You searched for: " + req.query.keyword);
-        let sqlquery= "SELECT * FROM books WHERE name LIKE '%" + req.query.keyword + "%'";
-        db.query(sqlquery, (err, result) => {
-            if (err) {
-                res.redirect('./');
-            }
-            let searchData = Object.assign({}, shopData, {searchBooks: result});
-            console.log(searchData)
-            res.render("search-result.ejs", searchData);
-        });
-    });
     app.get('/register', function (req,res) {
         res.render('register.ejs', shopData);                                                                     
     });                                                                                                 
@@ -440,19 +424,7 @@ const { check, validationResult } = require ('express-validator');
             res.send('The minimum price for a starter is £4.99')
         }
     });
-    //Bargain books
-    app.get('/bargainbooks', function(req, res) {
-        let sqlquery = "SELECT * FROM books"; //query database to get all the books
-        // execute sql query
-        db.query(sqlquery, (err, result) => {
-            if (err) {
-                res.redirect('./');
-            }
-            let newData = Object.assign({}, shopData, {availableBooks: result});
-            console.log(newData)
-            res.render("bargainbooks.ejs", newData)
-        });
-    });
+
 }
 
 
