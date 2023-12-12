@@ -195,44 +195,75 @@ const { check, validationResult } = require ('express-validator');
     })
 
         // Food API 
-        app.get('/Recepies', function(req,res) {
-            const http = require('https');
+        // app.get('/Recepies', function(req,res) {
+        //     const http = require('https');
+        //     const options = {
+        //         method: 'GET',
+        //         hostname: 'edamam-recipe-search.p.rapidapi.com',
+        //         port: null,
+        //         path: '/api/recipes/v2?type=public&co2EmissionsClass=A%2B&field%5B0%5D=uri&beta=true&random=true&cuisineType%5B0%5D=American&imageSize%5B0%5D=LARGE&mealType%5B0%5D=Breakfast&health%5B0%5D=alcohol-cocktail&diet%5B0%5D=balanced&dishType%5B0%5D=Biscuits%20and%20cookies',
+        //         headers: {
+        //             'Accept-Language': 'en',
+        //             'X-RapidAPI-Key': '9486a8821emsh667b5b1a47716a6p1fd922jsn3342ab69a8ca',
+        //             'X-RapidAPI-Host': 'edamam-recipe-search.p.rapidapi.com'
+        //         }
+        //     };
+        //     const apiRequest = http.request(options, function (apiResponse) {
+        //         const chunks = [];
+        
+        //         apiResponse.on('data', function (chunk) {
+        //             chunks.push(chunk);
+        //         });
+        
+        //         apiResponse.on('end', function () {
+        //             const body = Buffer.concat(chunks);
+        //             console.log(body.toString());
+        //             // Assuming you want to send the response to the client
+        //             res.send(body.toString());
+        //         });
+        //     });
+        // //Handle errors
+        // apiRequest.on('error', function(error) {
+        //     console.error(error);
+        //     // Handle error
+        //     res.status(500).send('Internal Server Error');
+        // });
+        // apiRequest.end();
+        
+        // });
+
+        //Food Recepies
+        app.get('/Recipes', function (req,res) {
+            const https = require('https');
             const options = {
                 method: 'GET',
-                hostname: 'edamam-recipe-search.p.rapidapi.com',
-                port: null,
-                path: '/api/recipes/v2?type=public&co2EmissionsClass=A%2B&field%5B0%5D=uri&beta=true&random=true&cuisineType%5B0%5D=American&imageSize%5B0%5D=LARGE&mealType%5B0%5D=Breakfast&health%5B0%5D=alcohol-cocktail&diet%5B0%5D=balanced&dishType%5B0%5D=Biscuits%20and%20cookies',
-                headers: {
-                    'Accept-Language': 'en',
-                    'X-RapidAPI-Key': '9486a8821emsh667b5b1a47716a6p1fd922jsn3342ab69a8ca',
-                    'X-RapidAPI-Host': 'edamam-recipe-search.p.rapidapi.com'
-                }
+	            hostname: 'food-recipes-with-images.p.rapidapi.com',
+	            port: null,
+	            path: '/?q=chicken%20soup',
+	            headers: {
+		            'X-RapidAPI-Key': '9486a8821emsh667b5b1a47716a6p1fd922jsn3342ab69a8ca',
+		            'X-RapidAPI-Host': 'food-recipes-with-images.p.rapidapi.com'
+	            }
             };
-            const apiRequest = http.request(options, function (apiResponse) {
+            const recipeReq = https.request(options, function(apiRes) {
                 const chunks = [];
-        
-                apiResponse.on('data', function (chunk) {
+
+                apiRes.on('data', function (chunk) {
                     chunks.push(chunk);
-                });
-        
-                apiResponse.on('end', function () {
+                })
+
+                apiRes.on('end', function () {
                     const body = Buffer.concat(chunks);
-                    console.log(body.toString());
-                    // Assuming you want to send the response to the client
-                    res.send(body.toString());
+                    var Recepies = JSON.parse(body)
+                    res.send(Recepies.d[0])
+
+                    // res.send(JSON.parse(body));
                 });
             });
-        //Handle errors
-        apiRequest.on('error', function(error) {
-            console.error(error);
-            // Handle error
-            res.status(500).send('Internal Server Error');
-        });
-        apiRequest.end();
-        
+
+            recipeReq.end();
         });
 
-        
 
 // DONT FORGET THE redirectLogin
     //List of Starters, Mains And Desserts
