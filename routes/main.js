@@ -20,7 +20,6 @@ const { check, validationResult } = require ('express-validator');
     });                                                                                                 
     app.post('/registered', [check('email').isEmail()], function (req,res) {
         // saving data in database
-       // res.send(' Hello '+ req.body.first + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email);
         const errors = validationResult(req);
         const bcrypt = require('bcrypt');
         const saltRounds = 10;
@@ -106,25 +105,6 @@ const { check, validationResult } = require ('express-validator');
             res.send('you are now logged out. <a href='+'./'+'>Home</a>');
         })
     })   
-
-        // hashedPassword = sqlquery
-
-        // bcrypt.compare(req.body.password, hashedPassword, function(err, result) {
-        //     if (err) {
-        //       // TODO: Handle error
-        //       res.send( 'There is an error')
-        //     }
-        //     else if (result == true) {
-        //       // TODO: Send message
-        //       res.send('That is the correct password')
-        //     }
-        //     else {
-        //       // TODO: Send message
-        //       res.send('That is the wrong password')
-        //     }
-        //   });
-      
-    
 
     
     app.post('/delete', function (req,res) {
@@ -228,25 +208,53 @@ const { check, validationResult } = require ('express-validator');
         });
 
 
+        app.get('/api', function (req,res) {
+            let sqlquery = "SELECT * FROM starters"; //query database to get all the starters
+            // execute sql query
+            db.query(sqlquery, (err, resultStarters) => {
+                if (err) {
+                    return res.redirect('/');
+                }
+    
+                let allmains = "SELECT * FROM mains"; //query database to get all the mains
+                // execute sql query
+                db.query(allmains, (err, resultMains) => {
+                    if (err) {
+                        return res.redirect('/');
+                    }
+                    let alldesserts = "SELECT * FROM desserts"; //query database to get all the desserts
+                    // execute sql query
+                    db.query(alldesserts, (err, resultDesserts) => {
+                        if (err) {
+                            return res.redirect('/');
+                        }
+                    let food = Object.assign({}, shopData, {availableStarters: resultStarters, availableMains: resultMains, availableDesserts: resultDesserts});
+                // Return results as a JSON object
+                res.json(food);
+                    });
+            });
+        });
+        });
+
 // DONT FORGET THE redirectLogin
     //List of Starters, Mains And Desserts
 
     app.get('/MenuList', function(req, res) {
 
-        let sqlquery = "SELECT * FROM starters"; //query database to get all the books
+        let sqlquery = "SELECT * FROM starters"; //query database to get all the starters
         // execute sql query
         db.query(sqlquery, (err, resultStarters) => {
             if (err) {
                 return res.redirect('/');
             }
 
-            let allmains = "SELECT * FROM mains"; //query database to get all the books
+            let allmains = "SELECT * FROM mains"; //query database to get all the mains
             // execute sql query
             db.query(allmains, (err, resultMains) => {
                 if (err) {
                     return res.redirect('/');
                 }
-                let alldesserts = "SELECT * FROM desserts"; //query database to get all the books
+                let alldesserts = "SELECT * FROM desserts"; //query database to get all the desserts
                 // execute sql query
                 db.query(alldesserts, (err, resultDesserts) => {
                     if (err) {
@@ -262,20 +270,20 @@ const { check, validationResult } = require ('express-validator');
 
     app.get('/Order', function(req, res) {
 
-        let sqlquery = "SELECT * FROM starters"; //query database to get all the books
+        let sqlquery = "SELECT * FROM starters"; //query database to get all the starters
         // execute sql query
         db.query(sqlquery, (err, resultStarters) => {
             if (err) {
                 return res.redirect('/');
             }
 
-            let allmains = "SELECT * FROM mains"; //query database to get all the books
+            let allmains = "SELECT * FROM mains"; //query database to get all the mains
             // execute sql query
             db.query(allmains, (err, resultMains) => {
                 if (err) {
                     return res.redirect('/');
                 }
-                let alldesserts = "SELECT * FROM desserts"; //query database to get all the books
+                let alldesserts = "SELECT * FROM desserts"; //query database to get all the desserts
                 // execute sql query
                 db.query(alldesserts, (err, resultDesserts) => {
                     if (err) {
