@@ -192,45 +192,8 @@ const { check, validationResult } = require ('express-validator');
                 }
             }
         });
-    })
+    })      
 
-        // Food API 
-        // app.get('/Recepies', function(req,res) {
-        //     const http = require('https');
-        //     const options = {
-        //         method: 'GET',
-        //         hostname: 'edamam-recipe-search.p.rapidapi.com',
-        //         port: null,
-        //         path: '/api/recipes/v2?type=public&co2EmissionsClass=A%2B&field%5B0%5D=uri&beta=true&random=true&cuisineType%5B0%5D=American&imageSize%5B0%5D=LARGE&mealType%5B0%5D=Breakfast&health%5B0%5D=alcohol-cocktail&diet%5B0%5D=balanced&dishType%5B0%5D=Biscuits%20and%20cookies',
-        //         headers: {
-        //             'Accept-Language': 'en',
-        //             'X-RapidAPI-Key': '9486a8821emsh667b5b1a47716a6p1fd922jsn3342ab69a8ca',
-        //             'X-RapidAPI-Host': 'edamam-recipe-search.p.rapidapi.com'
-        //         }
-        //     };
-        //     const apiRequest = http.request(options, function (apiResponse) {
-        //         const chunks = [];
-        
-        //         apiResponse.on('data', function (chunk) {
-        //             chunks.push(chunk);
-        //         });
-        
-        //         apiResponse.on('end', function () {
-        //             const body = Buffer.concat(chunks);
-        //             console.log(body.toString());
-        //             // Assuming you want to send the response to the client
-        //             res.send(body.toString());
-        //         });
-        //     });
-        // //Handle errors
-        // apiRequest.on('error', function(error) {
-        //     console.error(error);
-        //     // Handle error
-        //     res.status(500).send('Internal Server Error');
-        // });
-        // apiRequest.end();
-        
-        // });
 
         //Food Recepies
         app.get('/Recipes', function (req,res) {
@@ -326,32 +289,89 @@ const { check, validationResult } = require ('express-validator');
     });
 
     app.post('/getOrder', function (req,res) {
-        const numericArray = req.body.Order.map(Number);
-        const resultString = `(${numericArray.join(",")})`;
-        console.log(resultString)
+        // Get starter results
+        let numericStarterArray = null
+        if(typeof(req.body.Order) == "string") 
+            numericStarterArray = [Number(req.body.Order)]
+        else 
+            numericStarterArray = req.body.Order.map(Number);
+        const StarterresultString = `(${numericStarterArray.join(",")})`;
+        console.log(StarterresultString)
         
-        // res.send(resultString)
-        let sqlquerystarter = 'SELECT starter_name FROM starters WHERE starter_id IN ' + resultString ;
+        // Get main results
+        let numericMainArray = null
+        if(typeof(req.body.Order_two) == "string") 
+            numericMainArray = [Number(req.body.Order_two)]
+        else
+            numericMainArray = req.body.Order_two.map(Number);
+        const MainresultString = `(${numericMainArray.join(",")})`;
+        console.log(MainresultString)
+        
+        // Get dessert results
+        let numericDessertArray = null
+        if(typeof(req.body.Order_three) == "string") 
+            numericDessertArray = [Number(req.body.Order_three)]
+        else
+            numericDessertArray = req.body.Order_three.map(Number);
+        DessertresultString = `(${numericDessertArray.join(",")})`;
+        console.log(DessertresultString)
+        //All Prices
+        var prices = 0;
+        
+        // SQL query
+        let sqlquerystarter = 'SELECT starter_name,starter_price FROM starters WHERE starter_id IN ' + StarterresultString ;
         
         db.query(sqlquerystarter, (err, result) => {
             if (err) {
                 return console.error(err.message);
             }
             else{
-                var allresults = ""
+                var allStarterresults = ""
                 for (i=0; i < result.length; i++) {
-                    allresults += result[i].starter_name;
+                    allStarterresults += result[i].starter_name + ",";
+                    prices += result[i].starter_price
                 }
-            res.send(" Here are your Starters: " + allresults)
-                
-            }
-        })
-        let sqlquery = "";
-        // execute sql query
-        let newrecord = [];
-        db.query(sqlquery, newrecord, (err, result) => {
-            if (err) {
-                return console.error(err.message);
+            // res.send(" Here are your Starters: " + allresults)
+            let sqlquerymain = 'SELECT main_name,main_price FROM mains WHERE main_id IN ' + MainresultString ;
+        
+            db.query(sqlquerymain, (err, result) => {
+                if (err) {
+                    return console.error(err.message);
+                }
+                else{
+                    var allresults = ""
+                    for (i=0; i < result.length; i++) {
+                        allresults += result[i].main_name + ",";
+                        prices += result[i].main_price
+                    }
+                // res.send("Here are your Starters: " + allStarterresults + " " + "Here are your Mains: " + allresults)
+                let sqlquerydessert = 'SELECT dessert_name,dessert_price FROM desserts WHERE dessert_id IN ' + DessertresultString ;
+        
+                db.query(sqlquerydessert, (err, result) => {
+                    if (err) {
+                        return console.error(err.message);
+                    }
+                    else{
+                        var allresultsDesserts = ""
+                        for (i=0; i < result.length; i++) {
+                            allresultsDesserts += result[i].dessert_name + ",";
+                            prices += result[i].dessert_price
+                        }
+                    res.send("<p>Here are your Starters: " + allStarterresults + "</p>" + "<p>Here are your Mains: " + allresults + "</p>" + "Here are your Desserts: " + allresultsDesserts)
+                    var orderlist1 = allStarterresults + allresults + allresultsDesserts;
+                    
+  
+                   
+                    // List of orders
+                    console.log(orderlist1)
+                    //Price of order
+                    console.log("£ " + prices)
+                    // console.log("£" + "%.2f",prices)
+                    }
+                    
+                })
+                }
+            })
             }
         })
 
