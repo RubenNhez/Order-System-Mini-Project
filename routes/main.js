@@ -137,7 +137,7 @@ const { check, validationResult } = require ('express-validator');
 
     //List of Users
     app.get('/listusers', function(req, res) {
-        let sqlquery = "SELECT firstname, lastname, email, username FROM users"; // query database to get all users
+        let sqlquery = "SELECT user_id,firstname, lastname, email, username FROM users"; // query database to get all users
         // exxecute sql query
         db.query(sqlquery, (err, result) => {
             if(err) {
@@ -149,7 +149,20 @@ const { check, validationResult } = require ('express-validator');
 
         })
     })
+    //List of Orders
+    app.get('/listorders', function(req, res) {
+        let sqlquery = "SELECT * from vw_order_details"; // query database to get all orders
+        // exxecute sql query
+        db.query(sqlquery, (err, result) => {
+            if(err) {
+                res.redirect('./');
+            }
+            let newData = Object.assign({}, shopData, {availableorders: result});
+            console.log(newData)
+            res.render("listorders.ejs", newData)
 
+        })
+    })
 
     // Weather Forecast
     app.get('/weather', function(req,res) {
@@ -353,23 +366,21 @@ const { check, validationResult } = require ('express-validator');
         console.log(DessertresultString)
 
         // SQL query
-        let sqlquerystarter = 'CALL sp_insert_orderx(?,?,?,?) ' 
+        let sqlquery = 'CALL sp_insert_orderx(?,?,?,?) ' 
         
         params = [StarterresultString,MainresultString,DessertresultString,req.session.userId];
 
-        db.query(sqlquerystarter, params, (err, result) => {
+        db.query(sqlquery, params, (err, result) => {
             if (err) {
                 return console.error(err.message);
             }
             else{
         }})
 
-            /*
-        //All Prices
-        var prices = 0;
+        //Display what the customer has ordered after they selected what they want to eat
         
         // SQL query
-        let sqlquerystarter = 'SELECT starter_name,starter_price FROM starters WHERE starter_id IN ' + StarterresultString ;
+        let sqlquerystarter = 'SELECT starter_name,starter_price FROM starters WHERE starter_id IN (' + StarterresultString +')' ;
         
         db.query(sqlquerystarter, (err, result) => {
             if (err) {
@@ -381,8 +392,8 @@ const { check, validationResult } = require ('express-validator');
                     allStarterresults += result[i].starter_name + ",";
                     prices += result[i].starter_price
                 }
-            // res.send(" Here are your Starters: " + allresults)
-            let sqlquerymain = 'SELECT main_name,main_price FROM mains WHERE main_id IN ' + MainresultString ;
+
+            let sqlquerymain = 'SELECT main_name,main_price FROM mains WHERE main_id IN (' + MainresultString +')';
         
             db.query(sqlquerymain, (err, result) => {
                 if (err) {
@@ -394,8 +405,8 @@ const { check, validationResult } = require ('express-validator');
                         allresults += result[i].main_name + ",";
                         prices += result[i].main_price
                     }
-                // res.send("Here are your Starters: " + allStarterresults + " " + "Here are your Mains: " + allresults)
-                let sqlquerydessert = 'SELECT dessert_name,dessert_price FROM desserts WHERE dessert_id IN ' + DessertresultString ;
+
+                let sqlquerydessert = 'SELECT dessert_name,dessert_price FROM desserts WHERE dessert_id IN (' + DessertresultString +')';
         
                 db.query(sqlquerydessert, (err, result) => {
                     if (err) {
@@ -408,15 +419,7 @@ const { check, validationResult } = require ('express-validator');
                             prices += result[i].dessert_price
                         }
                     res.send("<p>Here are your Starters: " + allStarterresults + "</p>" + "<p>Here are your Mains: " + allresults + "</p>" + "Here are your Desserts: " + allresultsDesserts)
-                    var orderlist1 = allStarterresults + allresults + allresultsDesserts;
                     
-  
-                   
-                    // List of orders
-                    console.log(orderlist1)
-                    //Price of order
-                    console.log("£ " + prices)
-                    // console.log("£" + "%.2f",prices)
                     }
                     
                 })
@@ -424,10 +427,10 @@ const { check, validationResult } = require ('express-validator');
             })
             }
         })
-        */
+        
 
     })
-    /
+    
 
     app.get('/addstarter', function (req,res) {
         //Adding starter

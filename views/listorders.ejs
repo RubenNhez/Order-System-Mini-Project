@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <h1><%=shopName%> shop</h1>
+    <link rel="stylesheet"  type="text/css" href="main.css" />
+  </head>
+  <body>
+    <p>Here are all the orders:</p>
+    <p> You can see your user id on list of users page</p>
+    <ul>
+        <%for (var i=0; i<availableorders.length; i++){%>
+        <li>
+            <%="Order ID: " + availableorders[i].order_id+ ", User_id: " + availableorders[i].user_id + ", Price: " + availableorders[i].price + ", Starter ID: " + availableorders[i].starter_id + ", Main ID: " + availableorders[i].main_id + ", Dessert ID: " + availableorders[i].dessert_id %>
+        
+        </li>
+        <%}%>
+    </ul>
+    </p>
+
+
+  </body>
+  
+</html>

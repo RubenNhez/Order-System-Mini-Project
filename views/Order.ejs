@@ -9,6 +9,7 @@
         <form action="/getOrder" method="POST">
             <div>
                 <h2> Order Food</h2>
+                <h3>If you don't want a starter,main or dessert please select the option at the end of the list of items e.g. "No Starter"</h3>
                 <label for="Ordering">Starters:</label>
                 <select name="Order" id="Order" multiple>
                 <%for (var i=0; i<availableStarters.length; i++){%>

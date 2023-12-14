@@ -9,7 +9,7 @@
     <ul>
         <%for (var i=0; i<availableusers.length; i++){%>
         <li>
-            <%=availableusers[i].firstname+ ", " + availableusers[i].lastname + ", " + availableusers[i].email + ", " + availableusers[i].username %>
+            <%="User ID: " +availableusers[i].user_id + " Name: " + availableusers[i].firstname+ " Last Name: " + availableusers[i].lastname + " Email: " + availableusers[i].email + " Username: " + availableusers[i].username %>
         
         </li>
         <%}%>
