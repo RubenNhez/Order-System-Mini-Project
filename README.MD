@@ -3,7 +3,7 @@ But if you want to do it locally first create the sql tables by running tables.s
 In your terminal do npm install express ejs body-parser express-session express-validator mysql express-sanitizer bcrypt 
 
 Create a user to access the order food
-or use this user
+or use this user:
 Username : userone
 Password : password123
 
