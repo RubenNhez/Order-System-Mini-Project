@@ -32,15 +32,16 @@ const { check, validationResult } = require ('express-validator');
                 if (err) {
                   return console.error(err.message)
                 }
+                // Sanatize first name and last name
                 let sqlquery = "INSERT INTO users (firstname,lastname,email,username,hashedpassword) VALUES (?,?,?,?,?)";
-                let newrecord = [req.sanitize(req.body.first),req.body.last,req.body.email,req.body.username,hashedPassword];
+                let newrecord = [req.sanitize(req.body.first),req.sanitize(req.body.last),req.body.email,req.body.username,hashedPassword];
       
                 db.query(sqlquery,newrecord, (err, result) => {
                   if(err) {
                       return console.error(err.message);
                   }
                   else {
-                      result = 'Hello '+ req.sanitize(req.body.first) + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email;
+                      result = 'Hello '+ req.sanitize(req.body.first) + ' '+ req.sanitize(req.body.last) +' you are now registered!  We will send an email to you at ' + req.body.email;
                       result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword;
                       res.send(result);
       
@@ -63,7 +64,7 @@ const { check, validationResult } = require ('express-validator');
 
         const bcrypt = require('bcrypt');
 
-        let sqlquery = "SELECT hashedpassword FROM users WHERE username =?";
+        let sqlquery = "SELECT hashedpassword, user_id FROM users WHERE username =?";
         
         let userdata = req.body.username;//SELECT hashedpassword FROM userdetails WHERE username = "abc"
 
@@ -74,6 +75,7 @@ const { check, validationResult } = require ('express-validator');
             else {
                 //hashedPassword = result[0].hashedpassword;
                 //console.log(hashedpassword);
+                const user_id = result[0].user_id
                 console.log(req.body.password);
                 console.log(result);
                 bcrypt.compare(req.body.password, result[0].hashedpassword, function(err, result) {
@@ -83,7 +85,7 @@ const { check, validationResult } = require ('express-validator');
                     }
                     else if (result == true) {
 
-                      req.session.userId = req.body.username;
+                      req.session.userId = user_id//req.body.username;
                       res.send('That is the correct password');
                       //<a href=' + '/' + '>HOME</a>'
                     
@@ -96,7 +98,7 @@ const { check, validationResult } = require ('express-validator');
             }
         })
     })
-
+    //Logout
     app.get('/logout', redirectLogin, (req,res) => {
         req.session.destroy(err => {
             if (err) {
@@ -106,7 +108,7 @@ const { check, validationResult } = require ('express-validator');
         })
     })   
 
-    
+    // Delete a user
     app.post('/delete', function (req,res) {
         let sqlquery = 'DELETE FROM users WHERE username = "' + req.body.username +'"'
         let DeleteUsername = req.body.username
@@ -197,8 +199,35 @@ const { check, validationResult } = require ('express-validator');
 
                 apiRes.on('end', function () {
                     const body = Buffer.concat(chunks);
-                    var Recepies = JSON.parse(body)
-                    res.send(Recepies.d[0])
+                    var Recipes = JSON.parse(body)
+                    // const recipeDetails = Recipes.d.map(recipe => ({
+                    //     title: recipe.Title,
+                    //     ingredients: recipe.Ingredients,
+                    //     instructions: recipe.Instructions
+                    // }));
+     
+
+                    // for (i=0; i <Recipes.d.length; i++) {
+                    //     res.send(JSON.stringify(Recipes.d[i]))
+                    // }
+                    // res.send(JSON.stringify(recipeDetails))
+                    // res.send(JSON.stringify(Recipes.d[0].Ingredients) + "" + Recipes.d[0].Title)
+                    res.send("<p>"+"<h2>"+"Title: " + "</h2>" +Recipes.d[0].Title+ "</p>" 
+                    + "<p>"+ "<h2>"+"Ingredients: " +"</h2>"+ JSON.stringify(Recipes.d[0].Ingredients) + "</p>" 
+                    + "<p>" + "<h2>"+"Instructions: " + "</h2>"+JSON.stringify(Recipes.d[0].Instructions)+ "</p>"
+                    +"<p>"+"<h2>"+"Title: " + "</h2>" +Recipes.d[1].Title+ "</p>" 
+                    + "<p>"+ "<h2>"+"Ingredients: " +"</h2>"+ JSON.stringify(Recipes.d[1].Ingredients) + "</p>" 
+                    + "<p>" + "<h2>"+"Instructions: " + "</h2>"+JSON.stringify(Recipes.d[1].Instructions)+ "</p>"
+                    +"<p>"+"<h2>"+"Title: " + "</h2>" +Recipes.d[2].Title+ "</p>" 
+                    + "<p>"+ "<h2>"+"Ingredients: " +"</h2>"+ JSON.stringify(Recipes.d[2].Ingredients) + "</p>" 
+                    + "<p>" + "<h2>"+"Instructions: " + "</h2>"+JSON.stringify(Recipes.d[2].Instructions)+ "</p>"
+                    +"<p>"+"<h2>"+"Title: " + "</h2>" +Recipes.d[3].Title+ "</p>" 
+                    + "<p>"+ "<h2>"+"Ingredients: " +"</h2>"+ JSON.stringify(Recipes.d[3].Ingredients) + "</p>" 
+                    + "<p>" + "<h2>"+"Instructions: " + "</h2>"+JSON.stringify(Recipes.d[3].Instructions)+ "</p>"
+                    +"<p>"+"<h2>"+"Title: " + "</h2>" +Recipes.d[4].Title+ "</p>" 
+                    + "<p>"+ "<h2>"+"Ingredients: " +"</h2>"+ JSON.stringify(Recipes.d[4].Ingredients) + "</p>" 
+                    + "<p>" + "<h2>"+"Instructions: " + "</h2>"+JSON.stringify(Recipes.d[4].Instructions)+ "</p>"
+                    )
 
                     // res.send(JSON.parse(body));
                 });
@@ -206,8 +235,8 @@ const { check, validationResult } = require ('express-validator');
 
             recipeReq.end();
         });
-
-
+        
+        //API
         app.get('/api', function (req,res) {
             let sqlquery = "SELECT * FROM starters"; //query database to get all the starters
             // execute sql query
@@ -267,8 +296,7 @@ const { check, validationResult } = require ('express-validator');
         });
     });
 
-
-    app.get('/Order', function(req, res) {
+    app.get('/Order',redirectLogin, function(req, res) {
 
         let sqlquery = "SELECT * FROM starters"; //query database to get all the starters
         // execute sql query
@@ -295,7 +323,7 @@ const { check, validationResult } = require ('express-validator');
             });
         });
     });
-
+    // Get customer order
     app.post('/getOrder', function (req,res) {
         // Get starter results
         let numericStarterArray = null
@@ -303,26 +331,40 @@ const { check, validationResult } = require ('express-validator');
             numericStarterArray = [Number(req.body.Order)]
         else 
             numericStarterArray = req.body.Order.map(Number);
-        const StarterresultString = `(${numericStarterArray.join(",")})`;
+        const StarterresultString = `${numericStarterArray.join(",")}`;
         console.log(StarterresultString)
         
-        // Get main results
+        // // Get main results
         let numericMainArray = null
         if(typeof(req.body.Order_two) == "string") 
             numericMainArray = [Number(req.body.Order_two)]
         else
             numericMainArray = req.body.Order_two.map(Number);
-        const MainresultString = `(${numericMainArray.join(",")})`;
+        const MainresultString = `${numericMainArray.join(",")}`;
         console.log(MainresultString)
         
-        // Get dessert results
+        // // Get dessert results
         let numericDessertArray = null
         if(typeof(req.body.Order_three) == "string") 
             numericDessertArray = [Number(req.body.Order_three)]
         else
             numericDessertArray = req.body.Order_three.map(Number);
-        DessertresultString = `(${numericDessertArray.join(",")})`;
+        const DessertresultString = `${numericDessertArray.join(",")}`;
         console.log(DessertresultString)
+
+        // SQL query
+        let sqlquerystarter = 'CALL sp_insert_orderx(?,?,?,?) ' 
+        
+        params = [StarterresultString,MainresultString,DessertresultString,req.session.userId];
+
+        db.query(sqlquerystarter, params, (err, result) => {
+            if (err) {
+                return console.error(err.message);
+            }
+            else{
+        }})
+
+            /*
         //All Prices
         var prices = 0;
         
@@ -382,6 +424,7 @@ const { check, validationResult } = require ('express-validator');
             })
             }
         })
+        */
 
     })
     /
