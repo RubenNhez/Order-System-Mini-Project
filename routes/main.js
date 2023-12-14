@@ -66,7 +66,7 @@ const { check, validationResult } = require ('express-validator');
 
         let sqlquery = "SELECT hashedpassword, user_id FROM users WHERE username =?";
         
-        let userdata = req.body.username;//SELECT hashedpassword FROM userdetails WHERE username = "abc"
+        let userdata = req.body.username;
 
         db.query(sqlquery, userdata, (err, result) => {
             if (err) {
@@ -213,18 +213,7 @@ const { check, validationResult } = require ('express-validator');
                 apiRes.on('end', function () {
                     const body = Buffer.concat(chunks);
                     var Recipes = JSON.parse(body)
-                    // const recipeDetails = Recipes.d.map(recipe => ({
-                    //     title: recipe.Title,
-                    //     ingredients: recipe.Ingredients,
-                    //     instructions: recipe.Instructions
-                    // }));
-     
 
-                    // for (i=0; i <Recipes.d.length; i++) {
-                    //     res.send(JSON.stringify(Recipes.d[i]))
-                    // }
-                    // res.send(JSON.stringify(recipeDetails))
-                    // res.send(JSON.stringify(Recipes.d[0].Ingredients) + "" + Recipes.d[0].Title)
                     res.send("<p>"+"<h2>"+"Title: " + "</h2>" +Recipes.d[0].Title+ "</p>" 
                     + "<p>"+ "<h2>"+"Ingredients: " +"</h2>"+ JSON.stringify(Recipes.d[0].Ingredients) + "</p>" 
                     + "<p>" + "<h2>"+"Instructions: " + "</h2>"+JSON.stringify(Recipes.d[0].Instructions)+ "</p>"
@@ -242,7 +231,6 @@ const { check, validationResult } = require ('express-validator');
                     + "<p>" + "<h2>"+"Instructions: " + "</h2>"+JSON.stringify(Recipes.d[4].Instructions)+ "</p>"
                     )
 
-                    // res.send(JSON.parse(body));
                 });
             });
 
@@ -278,7 +266,6 @@ const { check, validationResult } = require ('express-validator');
         });
         });
 
-// DONT FORGET THE redirectLogin
     //List of Starters, Mains And Desserts
 
     app.get('/MenuList', function(req, res) {
@@ -308,7 +295,7 @@ const { check, validationResult } = require ('express-validator');
             });
         });
     });
-
+    // Display the possible items
     app.get('/Order',redirectLogin, function(req, res) {
 
         let sqlquery = "SELECT * FROM starters"; //query database to get all the starters
@@ -418,6 +405,7 @@ const { check, validationResult } = require ('express-validator');
                             allresultsDesserts += result[i].dessert_name + ",";
                             prices += result[i].dessert_price
                         }
+                        //What the customer ordered
                     res.send("<p>Here are your Starters: " + allStarterresults + "</p>" + "<p>Here are your Mains: " + allresults + "</p>" + "Here are your Desserts: " + allresultsDesserts)
                     
                     }
