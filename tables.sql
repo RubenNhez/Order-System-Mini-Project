@@ -20,7 +20,7 @@ INSERT INTO starters (starter_name, starter_price) VALUES
 ('Spinach, feta filo parcels and creamy tzatziki dip', 7.75),
 ('Crispy Coconut Prawns in Tangy Mango Sauce', 9.25),
 ('Fennel and courgette soup with crusty rolls', 6.20),
-('Mushroom filo Parcels with Pumpkin Sauce', 6.65);
+('Mushroom filo Parcels with Pumpkin Sauce', 6.65);,
 ('No Starter', 0.00);
 
 CREATE TABLE mains(main_id INT AUTO_INCREMENT NOT NULL,main_name VARCHAR(50), main_price DECIMAL(5,2) unsigned,PRIMARY KEY(main_id));
