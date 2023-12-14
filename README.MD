@@ -1,5 +1,10 @@
-First Run the tables.sql to create the database and create the tables necessary to run the app tables.sql
-Then run the sp_insert_orderx for the stored procedure and create views
-npm install express ejs body-parser express-session express-validator mysql express-sanitizer bcrypt on the terminal
-then after running the application main.js
-create a user to use orders
+Everything is set up on the mygoldsmiths server 
+But if you want to do it locally first create the sql tables by running tables.sql and sp_insert_orderx.sql on mysql
+In your terminal do npm install express ejs body-parser express-session express-validator mysql express-sanitizer bcrypt 
+
+Create a user to access the order food
+or use this user
+Username : userone
+Password : password123
+
+http://www.doc.gold.ac.uk/usr/450/
